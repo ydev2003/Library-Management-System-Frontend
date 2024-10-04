@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Remove Student</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Remove Student</h1>
+        <form id="removeStudentForm">
+            <label for="removeStudentId">Enter Student ID</label>
+            <input type="text" id="removeStudentId" required>
+            <button type="submit">Remove Student</button>
+        </form>
+        <button onclick=" window.history.back()" class="btn btn-secondary">Back</button>
+        <button onclick="location.href='index.html'">Home</button>
+    </div>
+    <script>
+        document.getElementById('removeStudentForm').addEventListener('submit', function(event) {
+            const token = window.localStorage.getItem('jwtToken'); // Retrieve the JWT token
+            event.preventDefault();
+            const studentId = document.getElementById('removeStudentId').value;
+    
+            fetch(`http://localhost:8090/student/delete/${studentId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': 'Bearer ' + token, // Include the JWT token in the Authorization header
+                    'Content-Type': 'application/json' // Set content type to JSON
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.text().then(message => {
+                    alert(message); // Show success message from the response body
+                    document.getElementById('removeStudentForm').reset(); // Reset the form
+                    });
+                }else if (response.status === 404) {
+                    return response.text().then(message => {
+                    alert(message); // Show success message from the response body
+                    // document.getElementById('removeStudentForm').reset(); // Reset the form
+                    });
+                }else {
+                    throw new Error('Student not found or could not be removed.'); // Handle error
+                }
+            })
+            .catch((error) => {
+                alert(error.message); // Show error message
+                console.error('Error:', error);
+            });
+        });
+    
+        function exit() {
+            window.close();
+        }
+    </script>
+</body>
+</html>

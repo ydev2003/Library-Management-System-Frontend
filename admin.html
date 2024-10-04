@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="admin.css"> <!-- Link to the new CSS file -->
+    <title>Library Management System</title>
+</head>
+<body>
+    <div class="container text-center">
+        <h1>Library Management System</h1>
+        <div class="search-container">
+            <input type="text" id="searchBook" placeholder="Enter Book ID" class="form-control search-box">
+            <button id="searchButton1" class="btn btn-primary1">Search Book</button>
+            <input type="text" id="searchStudent" placeholder="Enter Student ID" class="form-control search-box">
+            <button id="searchButton2" class="btn btn-primary1">Search Student</button>
+        </div>
+        <div class="button-container">
+            <div class="row">
+                <div class="col">
+                    <button onclick="location.href='add-book.html'" class="btn btn-success">
+                        <i class="fas fa-plus"></i> Add Book
+                    </button>
+                </div>
+                <div class="col">
+                    <button onclick="location.href='remove-book.html'" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Remove Book
+                    </button>
+                </div>
+                <div class="col">
+                    <button onclick="location.href='issue-book.html'" class="btn btn-primary">
+                        <i class="fas fa-book-open"></i> Issue Book
+                    </button>
+                </div>
+                <div class="col">
+                    <button onclick="location.href='update-student.html'" class="btn btn-warning">
+                        <i class="fas fa-user-edit"></i> Update Student
+                    </button>
+                </div>
+                <div class="col">
+                    <button onclick="fetchAllBooks()" class="btn btn-info">
+                        <i class="fas fa-book"></i> All Books
+                    </button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <button onclick="location.href='submit-book.html'" class="btn btn-primary">
+                        <i class="fas fa-book"></i> Submit Book
+                    </button>
+                </div>
+                <div class="col">
+                    <button onclick="location.href='update-book.html'" class="btn btn-warning">
+                        <i class="fas fa-edit"></i> Update Book
+                    </button>
+                </div>
+                <div class="col">
+                    <button onclick="fetchAllStudents()" class="btn btn-info">
+                        <i class="fas fa-users"></i> All Students
+                    </button>
+                </div>
+                <div class="col">
+                    <button onclick="location.href='book-taken.html'" class="btn btn-secondary">
+                        <i class="fas fa-book-open"></i> Book Taken
+                    </button>
+                </div>
+                <div class="col">
+                    <button onclick="location.href='register-student.html'" class="btn btn-success">
+                        <i class="fas fa-user-plus"></i> Register Student
+                    </button>
+                </div>
+                <div class="col">
+                    <button onclick="location.href='remove-student.html'" class="btn btn-danger">
+                        <i class="fas fa-user-times"></i> Remove Student
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="home-button-container">
+            <button onclick="location.href='index.html'" class="home-button btn btn-success" style="width: 100%;">
+                <i class="fas fa-home"></i> Home
+            </button>
+        </div>
+    </div>
+
+    <!-- Font Awesome for Icons -->
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        const token = window.localStorage.getItem('jwtToken');
+        console.log(token);
+        document.getElementById('searchButton1').addEventListener('click', function() {
+            const bookId = document.getElementById('searchBook').value.trim();
+        
+            if (!bookId) {
+                alert('Please enter a book ID.');
+                return;
+            }
+        
+            fetch(`http://localhost:8090/book/id/${bookId}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + token, // Include the JWT token in the Authorization header
+                    'Content-Type': 'application/json'
+                     // Set content type to JSON
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json(); // Parse JSON response if OK
+                } else if (response.status === 404) {
+                    throw new Error('Book not found.'); // Handle 404 NOT FOUND
+                } else {
+                    throw new Error('An error occurred: ' + response.statusText); // Handle other errors
+                }
+            })
+            .then(book => {
+                const bookJson = encodeURIComponent(JSON.stringify(book));
+                location.href = `search-book-details.html?book=${bookJson}`;
+            })
+            .catch(error => {
+                console.error('Error fetching book:', error);
+                alert('No book found.');
+            });
+        });
+
+        // Search functionality for students
+        document.getElementById('searchButton2').addEventListener('click', function() {
+            const studentId = document.getElementById('searchStudent').value.trim();
+
+            if (!studentId) {
+                alert('Please enter a student ID.');
+                return;
+            }
+
+            fetch(`http://localhost:8090/student/id/${studentId}`,{
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + token, // Include the JWT token in the Authorization header
+                    'Content-Type': 'application/json'
+                     // Set content type to JSON
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json(); // Parse JSON response if OK
+                } else if (response.status === 404) {
+                    throw new Error('Student not found.'); // Handle 404 NOT FOUND
+                } else {
+                    throw new Error('An error occurred: ' + response.statusText); // Handle other errors
+                }
+                })
+                .then(student => {
+                    const studentJson = encodeURIComponent(JSON.stringify(student));
+                    location.href = `search-student-details.html?student=${studentJson}`;
+                })
+                .catch(error => {
+                    console.error('Error fetching student:', error);
+                    alert('No student found.');
+                });
+        });
+
+        // Fetch all books
+        function fetchAllBooks() {
+            fetch('http://localhost:8090/book/get',{
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + token, // Include the JWT token in the Authorization header
+                    'Content-Type': 'application/json'
+                     // Set content type to JSON
+                }
+            })
+            .then(response => {
+                    if (!response.ok) {
+                        throw new Error('No books found');
+                    }
+                    return response.json();
+                })
+                .then(books => {
+                    if (Array.isArray(books) && books.length > 0) {
+                        const booksJson = encodeURIComponent(JSON.stringify(books));
+                        location.href = `search-book-details.html?books=${booksJson}`;
+                    } else {
+                        alert('No books found.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching books:', error);
+                    alert('Error fetching books: ' + error.message);
+                });
+        }
+
+        // Fetch all students
+        function fetchAllStudents() {
+            fetch('http://localhost:8090/student/get',{
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + token, // Include the JWT token in the Authorization header
+                    'Content-Type': 'application/json'
+                     // Set content type to JSON
+                }
+            })
+            .then(response => {
+                    if (!response.ok) {
+                        throw new Error('No students found');
+                    }
+                    return response.json();
+                })
+                .then(students => {
+                    if (Array.isArray(students) && students.length > 0) {
+                        const studentsJson = encodeURIComponent(JSON.stringify(students));
+                        location.href = `search-student-details.html?students=${studentsJson}`;
+                    } else {
+                        alert('No students found.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching students:', error);
+                    alert('Error fetching students: ' + error.message);
+                });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Book Details - Library Management System</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Book Details</h1>
+        <div class="results-frame">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Book ID</th>
+                        <th>Book Name</th>
+                        <th>Issue Date</th>
+                        <th>Due Date</th>
+                    </tr>
+                </thead>
+                <tbody id="bookDetails"></tbody>
+            </table>
+        </div>
+        <div class="button-container">
+            <button onclick=" window.history.back()" class="btn btn-secondary">Back</button>
+            <button onclick="location.href='index.html'">Home</button>
+        </div>
+    </div>
+
+    <script>
+        // Get the book details from the URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const booksJson = urlParams.get('books');
+
+        if (booksJson) {
+            const books = JSON.parse(decodeURIComponent(booksJson));
+            console.log('Books details received:', books); // Log received books
+            displayBooks(books);
+        } else {
+            document.getElementById('bookDetails').innerHTML = '<tr><td colspan="4">No books found.</td></tr>';
+        }
+
+        function displayBooks(books) {
+            const detailsDiv = document.getElementById('bookDetails');
+            detailsDiv.innerHTML = ''; // Clear existing content
+
+            // Check if the received data is an array or a single object
+            if (Array.isArray(books)) {
+                books.forEach(book => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${book.id || 'N/A'}</td>
+                        <td>${book.bookName || 'N/A'}</td>
+                        <td>${book.issueDate || 'N/A'}</td>
+                        <td>${book.dueDate || 'N/A'}</td>
+                    `;
+                    detailsDiv.appendChild(row);
+                });
+            } else {
+                // Handle single book object
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${books.id || 'N/A'}</td>
+                    <td>${books.bookName || 'N/A'}</td>
+                    <td>${books.issueDate || 'N/A'}</td>
+                    <td>${books.dueDate || 'N/A'}</td>
+                `;
+                detailsDiv.appendChild(row);
+            }
+        }
+    </script>
+</body>
+</html>

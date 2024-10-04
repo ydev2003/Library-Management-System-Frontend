@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Book Taken</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Book Taken</h1>
+        <form id="studentIdForm">
+            <label for="studentId">Enter Student Username</label>
+            <input type="text" id="studentId" required>
+            <button type="submit">Get Details</button>
+        </form>
+        <button onclick=" window.history.back()" class="btn btn-secondary">Back</button>
+        <button onclick="location.href='index.html'">Home</button>
+    </div>
+    <script>
+        const token = window.localStorage.getItem('jwtToken'); // Retrieve the JWT token
+    
+        document.getElementById('studentIdForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const studentId = document.getElementById('studentId').value;
+    
+            // Fetch book details based on student ID
+            fetch(`http://localhost:8090/student/book/${studentId}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + token, // Include the JWT token in the Authorization header
+                    'Content-Type': 'application/json' // Set content type to JSON
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json(); // Parse JSON response if status is 200 OK
+                } else if (response.status === 404) {
+                    // Handle 404 NOT FOUND
+                    // alert('Student not found.'); // Inform the user
+                    throw new Error('Student not found');
+                } else {
+                    // Handle other errors and check if the response has a body
+                    return response.text().then(text => {
+                        throw new Error(`An error occurred: ${text}`); // Throw an error with the response body
+                    });
+                }
+            })
+            .then(books => {
+                console.log('Fetched book details:', books);
+                if (Array.isArray(books) && books.length > 0) {
+                    const booksJson = encodeURIComponent(JSON.stringify(books));
+                    location.href = `book-details.html?books=${booksJson}`; // Redirect with all books
+                } else {
+                    alert('No books found for this student.');
+                }
+            })
+            .catch((error) => {
+                alert(error.message);
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>

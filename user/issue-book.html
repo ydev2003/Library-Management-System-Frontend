@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Issue Book</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Issue Book</h1>
+        <form id="issueBookForm">
+            <label for="bookId">Enter Book ID</label>
+            <input type="text" id="bookId" required>
+            <button type="submit">Issue Book</button>
+        </form>
+        <button onclick=" window.history.back()" class="btn btn-secondary">Back</button>
+        <button onclick="location.href='index.html'">Home</button>
+    </div>
+    <script>
+        const token = window.localStorage.getItem('jwtToken'); // Retrieve the JWT token
+    
+        document.getElementById('issueBookForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const bookId = document.getElementById('bookId').value;
+    
+            fetch(`http://localhost:8090/user/issue?bookId=${bookId}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': 'Bearer ' + token, // Include the JWT token in the Authorization header
+                    'Content-Type': 'application/json' // Set content type to JSON
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.text(); // Get success message
+                } else if (response.status === 409) {
+                    return response.text().then(text => {
+                        // alert(text);
+                        throw new Error(text); // Throw an error with the response body
+                    });
+                } else if (response.status === 400) {
+                    // Handle 400 BAD REQUEST
+                    return response.text().then(text => {
+                        throw new Error(text); // Throw an error with the response body
+                    });
+                } else if (response.status === 404) {
+                    // Handle 404 NOT FOUND
+                    return response.text().then(text => {
+                        throw new Error(text); // Throw an error with the response body
+                    });
+                }  else if (response.status === 406) {
+                    // Handle 404 NOT FOUND
+                    return response.text().then(text => {
+                        throw new Error(text); // Throw an error with the response body
+                    });
+                } else {
+                    throw new Error('An error occurred: ' + response.statusText); // Handle other errors
+                }
+            })
+            .then(message => {
+                alert(message); // Show success message
+                document.getElementById('issueBookForm').reset(); // Reset the form
+            })
+            .catch((error) => {
+                alert(error.message); // Show error message
+                console.error('Error:', error);
+            });
+        });
+    
+        function exit() {
+            window.close();
+        }
+    </script>
+</body>
+</html>

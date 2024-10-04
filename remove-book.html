@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Remove Book</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Remove Book</h1>
+        <form id="removeBookForm">
+            <label for="removeBookId">Enter Book ID</label>
+            <input type="text" id="removeBookId" required>
+            <button type="submit">Remove Book</button>
+        </form>
+        <button onclick=" window.history.back()" class="btn btn-secondary">Back</button>
+        <button onclick="location.href='index.html'">Home</button>
+    </div>
+    <script>
+        document.getElementById('removeBookForm').addEventListener('submit', function(event) {
+            const token = window.localStorage.getItem('jwtToken'); // Retrieve the JWT token
+            event.preventDefault();
+            const bookId = document.getElementById('removeBookId').value;
+    
+            fetch(`http://localhost:8090/book/delete/${bookId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': 'Bearer ' + token, // Include the JWT token in the Authorization header
+                    'Content-Type': 'application/json' // Set content type to JSON
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.text().then(message => {
+                    alert(message); // Show success message from the response body
+                    document.getElementById('removeBookForm').reset(); // Reset the form
+                    });
+                }else if (response.status === 404) {
+                    return response.text().then(message => {
+                    alert(message); // Show success message from the response body
+                    // document.getElementById('removeBookForm').reset(); // Reset the form
+                    });
+                }else {
+                    throw new Error('Book not found or could not be removed.'); // Handle error
+                }
+            })
+            .catch((error) => {
+                alert(error.message); // Show error message
+                console.error('Error:', error);
+            });
+        });
+    
+        function exit() {
+            window.close();
+        }
+    </script>
+</body>
+</html>

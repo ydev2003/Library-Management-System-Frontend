@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Register Student</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Register Student</h1>
+        <form id="registerStudentForm">
+            <label for="studentId">Enter Student Username</label>
+            <input type="text" id="studentId" required>
+            <label for="password">Enter Student Password</label>
+            <input type="password" id="password" required>
+            <label for="studentName">Enter Student Name</label>
+            <input type="text" id="studentName" required>
+            <label for="fatherName">Enter Father's Name</label>
+            <input type="text" id="fatherName" required>
+            <label for="age">Enter Age</label>
+            <input type="number" id="age" required>
+            <label for="mobileNumber">Enter Mobile Number</label>
+            <input type="text" id="mobileNumber" required>
+            <button type="submit">Register Student</button>
+        </form>
+        <button onclick=" window.history.back()" class="btn btn-secondary">Back</button>
+        <button onclick="location.href='index.html'">Home</button>
+    </div>
+    <script>
+        document.getElementById('registerStudentForm').addEventListener('submit', function(event) {
+            const token = window.localStorage.getItem('jwtToken');
+            event.preventDefault();
+            const studentId = document.getElementById('studentId').value;
+            const password = document.getElementById('password').value;
+            const studentName = document.getElementById('studentName').value;
+            const fatherName = document.getElementById('fatherName').value;
+            const age = document.getElementById('age').value;
+            const mobileNumber = document.getElementById('mobileNumber').value;
+
+            // // Validate that studentId is a number
+            // if (isNaN(studentId) || studentId <= 0) {
+            //     alert('Please enter a valid positive number for Student ID.');
+            //     return;
+            // }
+
+            fetch('http://localhost:8090/student/post', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + token,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: studentId,
+                    password: password,
+                    studentName: studentName,
+                    fatherName: fatherName,
+                    age: age,
+                    mobileNumber: mobileNumber,
+                }),
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Handle 200 OK and 201 CREATED
+                    if (response.status === 201) {
+                        return response.text().then(message => {
+                            alert(message); // Show success message from the response body
+                            document.getElementById('registerStudentForm').reset(); // Reset the form
+                        });
+                    }
+                    return response.json(); // For other successful responses
+                } else if (response.status === 409) {
+                    return response.text().then(message => {
+                            alert(message); // Show success message from the response body
+                            // document.getElementById('registerStudentForm').reset(); // Reset the form
+                        });
+                } else {
+                    // Handle other error statuses
+                    return response.text().then(text => {
+                        throw new Error(`Failed to register student: ${text}`); // Throw an error with the response body
+                    });
+                }
+            })
+            .catch((error) => {
+                alert(error.message); // Show error message
+                console.error('Error:', error);
+            });
+        });
+
+        function exit() {
+            window.close();
+        }
+    </script>
+</body>
+</html>

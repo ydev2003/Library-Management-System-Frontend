@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Student Details - Library Management System</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Student Details</h1>
+        <div class="results-frame">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Name</th>
+                        <th>Father's Name</th>
+                        <th>Age</th>
+                        <th>Mobile Number</th>
+                        <th>Books Taken</th>
+                    </tr>
+                </thead>
+                <tbody id="studentDetails"></tbody>
+            </table>
+        </div>
+        <div class="button-container">
+            <button onclick=" window.history.back()" class="btn btn-secondary">Back</button>
+            <button onclick="location.href='index.html'">Home</button>
+        </div>
+    </div>
+
+    <script>
+        // Get the student details from the URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const studentJson = urlParams.get('student'); // Correct variable name
+        const studentsJson = urlParams.get('students'); // For handling list of students
+
+        console.log('Student JSON from URL:', studentJson); // Log the retrieved JSON
+
+        if (studentJson) { // Check if studentJson is not null
+            const student = JSON.parse(decodeURIComponent(studentJson)); // Decode and parse
+            console.log('Parsed student object:', student); // Log the parsed student object
+            displayStudentDetails(student);
+        } else if (studentsJson) { // Check if studentsJson is not null
+            const students = JSON.parse(decodeURIComponent(studentsJson)); // Decode and parse
+            console.log('Parsed students array:', students); // Log the parsed students array
+            displayStudentDetails(students);
+        } else {
+            document.getElementById('studentDetails').innerHTML = '<tr><td colspan="6">No student found.</td></tr>';
+        }
+
+        function displayStudentDetails(students) {
+            const detailsDiv = document.getElementById('studentDetails');
+            detailsDiv.innerHTML = ''; // Clear existing content
+
+            // Check if the received data is an array or a single object
+            if (Array.isArray(students)) {
+                students.forEach(student => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${student.username || 'N/A'}</td>
+                        <td>${student.studentName || 'N/A'}</td>
+                        <td>${student.fatherName || 'N/A'}</td>
+                        <td>${student.age || 'N/A'}</td>
+                        <td>${student.mobileNumber ? student.mobileNumber : 'Not Available'}</td>
+                        <td>${student.bookTaken ? student.bookTaken.length : 0}</td>
+                    `;
+                    detailsDiv.appendChild(row);
+                });
+            } else {
+                // Handle single student object
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${students.username || 'N/A'}</td>
+                    <td>${students.studentName || 'N/A'}</td>
+                    <td>${students.fatherName || 'N/A'}</td>
+                    <td>${students.age || 'N/A'}</td>
+                    <td>${students.mobileNumber ? students.mobileNumber : 'Not Available'}</td>
+                    <td>${students.bookTaken ? students.bookTaken.length : 0}</td>
+                `;
+                detailsDiv.appendChild(row);
+            }
+        }
+    </script>
+</body>
+</html>

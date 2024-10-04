@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Book Details - Library Management System</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Book Details</h1>
+        <div class="results-frame">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Book ID</th>
+                        <th>Book Name</th>
+                        <th>Author</th>
+                        <th>Price</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="bookDetails"></tbody>
+            </table>
+        </div>
+        <div class="button-container">
+            <button onclick=" window.history.back()" class="btn btn-secondary">Back</button>
+            <button onclick="location.href='index.html'">Home</button>
+        </div>
+    </div>
+
+    <script>
+        // Get the book details from the URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const bookJson = urlParams.get('book');
+        const booksJson = urlParams.get('books'); // To handle list of books
+
+        if (bookJson) {
+            const book = JSON.parse(decodeURIComponent(bookJson));
+            displayBookDetails(book);
+        } else if (booksJson) {
+            const books = JSON.parse(decodeURIComponent(booksJson));
+            displayBookDetails(books);
+        } else {
+            document.getElementById('bookDetails').innerHTML = '<tr><td colspan="5">No book found.</td></tr>';
+        }
+
+        function displayBookDetails(book) {
+            const detailsDiv = document.getElementById('bookDetails');
+            detailsDiv.innerHTML = ''; // Clear existing content
+
+            if (Array.isArray(book)) {
+                // If it's an array, iterate through each book
+                book.forEach(b => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${b.id || 'N/A'}</td>
+                        <td>${b.bookName || 'N/A'}</td>
+                        <td>${b.authorName || 'N/A'}</td>
+                        <td>$${b.price || 'N/A'}</td>
+                        <td>${b.available ? 'Available' : 'Not Available'}</td>
+                    `;
+                    detailsDiv.appendChild(row);
+                });
+            } else {
+                // Handle single book object
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${book.id || 'N/A'}</td>
+                    <td>${book.bookName || 'N/A'}</td>
+                    <td>${book.authorName || 'N/A'}</td>
+                    <td>$${book.price || 'N/A'}</td>
+                    <td>${book.available ? 'Available' : 'Not Available'}</td>
+                `;
+                detailsDiv.appendChild(row);
+            }
+        }
+    </script>
+</body>
+</html>

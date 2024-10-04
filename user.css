@@ -1,0 +1,102 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: yellow;
+    color: red;
+    text-align: center;
+}
+
+.container {
+    margin-top: 50px; /* Space from the top */
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.search-container {
+    margin-top: 5%;
+    display: flex; /* Flexbox for the search bar and button */
+    justify-content: center; /* Center align */
+    align-items: center; /* Center vertically */
+    margin-left: 5%;
+    margin-right: 10%;
+}
+
+.search-box{
+    width: 25%;
+    margin-right: 2%;
+    margin-left: 5%;
+}
+.btn-primary1{
+    margin-right: 2%;
+    background-color: aquamarine;
+    border-color: aquamarine;
+}
+.btn-primary{
+    margin-right: 2%;
+    
+}
+
+
+.button-container {
+    margin-top: 20px;
+}
+
+.button-container .btn {
+    margin: 5px; /* Space between buttons */
+    flex: 1 1 120px; /* Flexible button size */
+}
+
+.home-button-container {
+    margin-top: 20px;body {
+        background-color: #f4f4f4; /* Keep the existing background color */
+    }
+    
+    .container {
+        margin-top: 50px; /* Space from the top */
+        padding: 20px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .search-container {
+        display: flex; /* Use Flexbox for alignment */
+        justify-content: center; /* Center the search elements */
+        margin-bottom: 20px; /* Space below the search bar */
+    }
+    
+    .search-box {
+        margin-right: 10px; /* Space between search box and button */
+        flex: 1; /* Allow search box to grow */
+    }
+    
+    .button-container {
+        margin-top: 20px;
+    }
+    
+    .button-container .btn {
+        margin: 5px; /* Space between buttons */
+        flex: 1; /* Make buttons the same size */
+    }
+    text-align: center; /* Center the Home button */
+}
+
+.home-button {
+    background-color: #28a745; /* Green color for Home button */
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 5%;
+}
+
+.home-button:hover {
+    background-color: #218838;
+}
+.row {
+    margin-top: 5%;
+}

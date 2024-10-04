@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Update Book Details</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Update Book Details</h1>
+        <form id="updateBookForm">
+            <label for="bookId">Enter Book ID (Number Only)</label>
+            <input type="number" id="bookId" required>
+            <label for="bookName">Enter Book Name</label>
+            <input type="text" id="bookName" required>
+            <label for="authorName">Enter Author Name</label>
+            <input type="text" id="authorName" required>
+            <label for="price">Enter Price</label>
+            <input type="number" id="price" required>
+            <button type="submit">Update Details</button>
+        </form>
+        <button onclick=" window.history.back()" class="btn btn-secondary">Back</button>
+        <button onclick="location.href='index.html'">Home</button>
+    </div>
+    <script>
+        document.getElementById('updateBookForm').addEventListener('submit', function(event) {
+            const token = window.localStorage.getItem('jwtToken');
+            event.preventDefault();
+            const bookId = document.getElementById('bookId').value;
+            const bookName = document.getElementById('bookName').value;
+            const authorName = document.getElementById('authorName').value;
+            const price = document.getElementById('price').value;
+
+            // Validate that bookId is a number
+            if (isNaN(bookId) || bookId <= 0) {
+                alert('Please enter a valid positive number for Book ID.');
+                return;
+            }
+
+            fetch('http://localhost:8090/book/update', {
+                method: 'PUT',
+                headers: {
+                    'Authorization': 'Bearer ' + token,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: bookId,
+                    bookName: bookName,
+                    authorName: authorName,
+                    price: price,
+                    available: true // Default to available
+                }),
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.text().then(message => {
+                    alert(message); // Show success message from the response body
+                    document.getElementById('updateBookForm').reset(); // Reset the form
+                    });
+                }else if (response.status === 404) {
+                    return response.text().then(message => {
+                    alert(message); // Show success message from the response body
+                    // document.getElementById('updateBookForm').reset(); // Reset the form
+                    });
+                }else {
+                    throw new Error('Book not found or could not be updated.'); // Handle error
+                }
+            })
+            .catch((error) => {
+                alert(error.message); // Show error message
+                console.error('Error:', error);
+            });
+        });
+
+        function exit() {
+            window.close();
+        }
+    </script>
+</body>
+</html>

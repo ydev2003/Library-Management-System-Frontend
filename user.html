@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="admin.css"> <!-- Link to the new CSS file -->
+    <title>Library Management System</title>
+</head>
+<body>
+    <div class="container text-center" style="margin-top: 100px;">
+        <h1>Library Management System</h1>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Enter Book ID" class="form-control search-box">
+            <button id="searchButton" class="btn btn-primary1">Search</button>
+        </div>
+        <div class="button-container">
+            <div class="row">
+                <div class="col">
+                    <button onclick="location.href='user/issue-book.html'" class="btn btn-primary">
+                        <i class="fas fa-book-open"></i> Issue Book
+                    </button>
+                </div>
+                <div class="col">
+                    <button onclick="fetchAllBookTaken()"class="btn btn-secondary">
+                        <i class="fas fa-edit"></i> Book Taken
+                    </button>
+                </div>
+                <div class="col">
+                    <button onclick="fetchAllBooks()" class="btn btn-info">
+                        <i class="fas fa-book"></i> All Books
+                    </button>
+                </div>
+                <div class="col">
+                    <button onclick="location.href='user/update-student-password.html'" class="btn btn-warning">
+                        <i class="fas fa-user-edit"></i> Change Password
+                    </button>
+                </div>
+                <div class="col">
+                    <button onclick="location.href='user/submit-book.html'" class="btn btn-primary">
+                        <i class="fas fa-book"></i> Submit Book
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="home-button-container">
+            <button onclick="location.href='index.html'" class="home-button btn btn-success" style="width: 100%;">
+                <i class="fas fa-home"></i> Home
+            </button>
+        </div>
+    </div>
+
+    <!-- Font Awesome for Icons -->
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        // Search functionality
+        const token = window.localStorage.getItem('jwtToken');
+        document.getElementById('searchButton').addEventListener('click', function() {
+            
+            const bookId = document.getElementById('searchInput').value.trim();
+
+            if (!bookId) {
+                alert('Please enter a book ID.');
+                return;
+            }
+
+            fetch(`http://localhost:8090/book/id/${bookId}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + token, // Include the JWT token in the Authorization header
+                    'Content-Type': 'application/json'
+                     // Set content type to JSON
+                }
+            })
+            .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Book not found');
+                    }
+                    return response.json();
+                })
+                .then(book => {
+                    // Redirect to search-details.html with book details in URL
+                    const bookJson = encodeURIComponent(JSON.stringify(book));
+                    location.href = `search-book-details.html?book=${bookJson}`;
+                })
+                .catch(error => {
+                    console.error('Error fetching book:', error);
+                    alert('No book found.');
+                });
+        });
+        // Fetch all books
+        function fetchAllBooks() {
+            fetch('http://localhost:8090/book/get', {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + token, // Include the JWT token in the Authorization header
+                    'Content-Type': 'application/json'
+                     // Set content type to JSON
+                }
+            })
+            .then(response => {
+                    if (!response.ok) {
+                        throw new Error('No books found');
+                    }
+                    return response.json();
+                })
+                .then(books => {
+                    if (Array.isArray(books) && books.length > 0) {
+                        const booksJson = encodeURIComponent(JSON.stringify(books));
+                        location.href = `search-book-details.html?books=${booksJson}`;
+                    } else {
+                        alert('No books found.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching books:', error);
+                    alert('Error fetching books: ' + error.message);
+                });
+        }
+        function fetchAllBookTaken() {
+            fetch(`http://localhost:8090/user/book`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + token, // Include the JWT token in the Authorization header
+                    'Content-Type': 'application/json' // Set content type to JSON
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json(); // Parse JSON response if status is 200 OK
+                } else if (response.status === 404) {
+                    // Handle 404 NOT FOUND
+                    // alert('Student not found.'); // Inform the user
+                    throw new Error('Student not found');
+                } else {
+                    // Handle other errors and check if the response has a body
+                    return response.text().then(text => {
+                        throw new Error(`An error occurred: ${text}`); // Throw an error with the response body
+                    });
+                }
+            })
+            .then(books => {
+                console.log('Fetched book details:', books);
+                if (Array.isArray(books) && books.length > 0) {
+                    const booksJson = encodeURIComponent(JSON.stringify(books));
+                    location.href = `book-details.html?books=${booksJson}`; // Redirect with all books
+                } else {
+                    alert('No books found for this student.');
+                }
+            })
+            .catch((error) => {
+                alert(error.message);
+                console.error('Error:', error);
+            });
+            }
+    </script>
+</body>
+</html>
