@@ -23,7 +23,7 @@
             event.preventDefault();
             const bookId = document.getElementById('removeBookId').value;
     
-            fetch(`http://localhost:8090/book/delete/${bookId}`, {
+            fetch(`https://library-management-system-9yb4.onrender.com/book/delete/${bookId}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': 'Bearer ' + token, // Include the JWT token in the Authorization header

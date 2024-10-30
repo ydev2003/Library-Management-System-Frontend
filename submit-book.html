@@ -26,7 +26,7 @@
             const studentId = document.getElementById('studentId').value;
             const bookId = document.getElementById('submitBookId').value;
 
-            fetch(`http://localhost:8090/admin/submit?studentId=${studentId}&bookId=${bookId}`, {
+            fetch(`https://library-management-system-9yb4.onrender.com/admin/submit?studentId=${studentId}&bookId=${bookId}`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': 'Bearer ' + token, // Include the JWT token in the Authorization header

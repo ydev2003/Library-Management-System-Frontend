@@ -23,7 +23,7 @@
             event.preventDefault();
             const studentId = document.getElementById('removeStudentId').value;
     
-            fetch(`http://localhost:8090/student/delete/${studentId}`, {
+            fetch(`https://library-management-system-9yb4.onrender.com/student/delete/${studentId}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': 'Bearer ' + token, // Include the JWT token in the Authorization header

@@ -68,7 +68,7 @@
                 return;
             }
 
-            fetch(`http://localhost:8090/book/id/${bookId}`, {
+            fetch(`https://library-management-system-9yb4.onrender.com/user/book/id/${bookId}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': 'Bearer ' + token, // Include the JWT token in the Authorization header
@@ -94,7 +94,7 @@
         });
         // Fetch all books
         function fetchAllBooks() {
-            fetch('http://localhost:8090/book/get', {
+            fetch('https://library-management-system-9yb4.onrender.com/user/book/get', {
                 method: 'GET',
                 headers: {
                     'Authorization': 'Bearer ' + token, // Include the JWT token in the Authorization header
@@ -122,7 +122,7 @@
                 });
         }
         function fetchAllBookTaken() {
-            fetch(`http://localhost:8090/user/book`, {
+            fetch(`https://library-management-system-9yb4.onrender.com/user/book`, {
                 method: 'GET',
                 headers: {
                     'Authorization': 'Bearer ' + token, // Include the JWT token in the Authorization header
